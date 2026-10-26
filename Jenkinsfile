@@ -1,4 +1,4 @@
-
+﻿
 pipeline {
     agent any
 
@@ -21,25 +21,25 @@ pipeline {
         }
 
 
-stage('Diagnose Backend Files') {
+
+stage('Test Backend') {
     steps {
-        sh '''
-            echo "Workspace: $WORKSPACE"
-            echo "Backend directory:"
-            ls -la "$WORKSPACE/backend"
-
-            echo "Lockfile in Jenkins workspace:"
-            test -f "$WORKSPACE/backend/package-lock.json"
-
-            echo "Lockfile inside Node container:"
-            docker run --rm \
-                -v "$WORKSPACE/backend:/app" \
-                -w /app \
-                node:20-alpine \
-                sh -c 'pwd && ls -la && test -f package-lock.json'
-        '''
+        dir('backend') {
+            sh '''
+                docker build -f - -t quickbasket-backend-test:${BUILD_NUMBER} . <<'EOF'
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN npm test
+RUN npm run build
+EOF
+            '''
+        }
     }
 }
+
 
 
         stage('Build Backend') {
