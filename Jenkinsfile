@@ -1,4 +1,4 @@
-
+﻿
 pipeline {
     agent any
 
@@ -20,17 +20,17 @@ pipeline {
             }
         }
 
-        stage('Test Backend') {
-            steps {
-                dir('backend') {
-                    sh '''
-                        npm ci
-                        npm test
-                        npm run build
-                    '''
-                }
-            }
-        }
+stage('Test Backend') {
+    steps {
+        sh '''
+            docker run --rm \
+                -v "$WORKSPACE/backend:/app" \
+                -w /app \
+                node:20-alpine \
+                sh -c "npm ci && npm test && npm run build"
+        '''
+    }
+}
 
         stage('Build Backend') {
             steps {
