@@ -1,3 +1,4 @@
+﻿
 pipeline {
     agent any
 
@@ -16,6 +17,18 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Test Backend') {
+            steps {
+                dir('backend') {
+                    sh '''
+                        npm ci
+                        npm test
+                        npm run build
+                    '''
+                }
             }
         }
 
