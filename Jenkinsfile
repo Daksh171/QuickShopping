@@ -29,9 +29,17 @@ stage('Test Backend') {
                 docker build -f - -t quickbasket-backend-test:${BUILD_NUMBER} . <<'EOF'
 FROM node:20-alpine
 WORKDIR /app
+
 COPY package.json package-lock.json ./
 RUN npm ci
+
 COPY . .
+
+# Dummy credentials for CI tests only; never use in production.
+ENV MONGODB_URI=mongodb://127.0.0.1:27017/quickbasket_test
+ENV JWT_SECRET=ci-only-test-jwt-secret-not-for-production-123456789
+ENV COOKIE_SECRET=ci-only-test-cookie-secret-not-for-production-123456789
+
 RUN npm test
 RUN npm run build
 EOF
