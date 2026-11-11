@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { ApiResponse, Cart, Category, Order, PaginationInfo, Product, User } from '../types';
+import type { ApiResponse, Cart, Category, Order, PaginationInfo, Product, SearchSuggestion, TrendingSearch, User } from '../types';
 
 const api = axios.create({
   baseURL: '/api',
@@ -96,6 +96,28 @@ export async function getOrders(): Promise<ApiResponse<{ orders: Order[] }>> {
 export async function getOrderById(id: string): Promise<ApiResponse<{ order: Order }>> {
   const { data } = await api.get(`/orders/${id}`);
   return data;
+}
+
+// Search
+export async function getSearchSuggestions(
+  q: string,
+  limit?: number
+): Promise<ApiResponse<{ suggestions: SearchSuggestion[] }>> {
+  const { data } = await api.get('/search/suggestions', { params: { q, limit } });
+  return data;
+}
+
+export async function getTrendingSearches(): Promise<ApiResponse<{ trending: TrendingSearch[] }>> {
+  const { data } = await api.get('/search/trending');
+  return data;
+}
+
+export async function recordSearchEvent(query: string): Promise<void> {
+  try {
+    await api.post('/search/events', { query });
+  } catch {
+    // Fire-and-forget logging; non-blocking
+  }
 }
 
 export default api;

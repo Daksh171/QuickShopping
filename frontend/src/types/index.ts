@@ -70,3 +70,19 @@ export interface PaginationInfo {
   total: number;
   pages: number;
 }
+
+export interface SearchSuggestion {
+  _id: string;
+  name: string;
+  slug: string;
+  price: number;
+  originalPrice?: number;
+  imageKey: string;
+  packageSize: string;
+  category: { name: string; slug: string } | null;
+}
+
+export interface TrendingSearch {
+  query: string;
+  count: number;
+}

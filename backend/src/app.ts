@@ -13,6 +13,7 @@ import categoriesRoutes from './modules/categories/categories.routes';
 import productsRoutes from './modules/products/products.routes';
 import cartRoutes from './modules/cart/cart.routes';
 import ordersRoutes from './modules/orders/orders.routes';
+import searchRoutes from './modules/search/search.routes';
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', ordersRoutes);
+app.use('/api/search', searchRoutes);
 
 // Error handling
 app.use(notFoundHandler);

@@ -1,24 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, Search, MapPin, LogOut, Package, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, MapPin, LogOut, Package, Menu, X } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 import { useState } from 'react';
+import SmartSearch from './SmartSearch';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
   const { itemCount } = useCart();
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery('');
-    }
-  };
 
   const handleLogout = async () => {
     await logout();
@@ -44,20 +36,10 @@ export default function Navbar() {
             <span>Delivery in <strong>10 mins</strong></span>
           </div>
 
-          {/* Search */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 max-w-md mx-4">
-            <div className="relative w-full">
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-              <input
-                type="text"
-                placeholder="Search for groceries, snacks, drinks..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="input-brutal pl-10 text-sm"
-                style={{ borderWidth: '2px' }}
-              />
-            </div>
-          </form>
+          {/* Desktop Smart Search */}
+          <div className="hidden md:flex flex-1 max-w-md mx-4">
+            <SmartSearch />
+          </div>
 
           {/* Right actions */}
           <div className="flex items-center gap-2">
@@ -130,19 +112,7 @@ export default function Navbar() {
         {/* Mobile search */}
         {mobileMenuOpen && (
           <div className="md:hidden pb-4">
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search for groceries..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="input-brutal pl-10 text-sm"
-                  style={{ borderWidth: '2px' }}
-                />
-              </div>
-            </form>
+            <SmartSearch onClose={() => setMobileMenuOpen(false)} />
           </div>
         )}
       </div>
